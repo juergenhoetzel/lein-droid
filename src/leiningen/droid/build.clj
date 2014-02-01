@@ -11,7 +11,7 @@
                        ensure-paths with-process read-password append-suffix
                        create-debug-keystore get-project-file read-project
                        sdk-binary relativize-path get-sdk-support-jars
-                       get-resource-jars]]
+                       get-resource-jars get-clojure-jar]]
          [manifest :only [write-manifest-with-internet-permission]]])
   (:require [clojure.string]
             [clojure.set]
@@ -223,10 +223,11 @@ files or jar file, e.g. one produced by proguard."
   (ensure-paths sdk-path out-res-pkg-path out-dex-path)
   (let [suffix (if (dev-build? project) "debug-unaligned" "unaligned")
         unaligned-path (append-suffix out-apk-path suffix)
+        clojure-jar (get-clojure-jar project)
         resource-jars (concat (get-resource-jars project)
                               (map #(java.io.File. %) resource-jars-paths))]
     (sdk/create-apk project
-                    :apk-name unaligned-path :resource-jars resource-jars)))
+                    :apk-name unaligned-path :resource-jars resource-jars :clojure-jar clojure-jar)))
 
 (defn sign-apk
   "Signs APK file with the key taken from the keystore.

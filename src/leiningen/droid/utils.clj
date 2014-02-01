@@ -266,6 +266,15 @@
         mod-proj (assoc project :dependencies res-deps)]
     (resolve-dependencies :dependencies mod-proj)))
 
+(defn get-clojure-jar
+  "Get the Clojure jar from list of dependency libraries"
+  [{:keys [dependencies] :as project}]
+  (let [mod-proj (->> (filter (fn [[lib _ & options :as dep]]
+                                (= lib 'org.clojure-android/clojure))
+                            dependencies)
+                      (assoc project :dependencies))]
+    (first (resolve-dependencies :dependencies mod-proj))))
+
 (defmacro with-process
   "Executes the subprocess specified in the binding list and applies
   `body` do it while it is running. The binding list consists of a var
